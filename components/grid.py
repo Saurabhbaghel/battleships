@@ -94,10 +94,10 @@ class Grid:
             :param _vessel:
             :return:
             """
-            assert vessel.pos.x in ALPHABETS[:self.size-1], (
-                "x-coord can be only between A and {}, but it is {}".format(ALPHABETS[self.size-1], vessel.pos.x))
-            assert vessel.pos.y in list(range(self.size)), (
-                "y-coord can be only between 0 and {} but it is {}".format(self.size-1, vessel.pos.y))
+            if vessel.pos.x not in ALPHABETS[:self.size-1]:
+                raise ValueError("x-coord can be only between A and {}, but it is {}".format(ALPHABETS[self.size-1], vessel.pos.x))
+            if vessel.pos.y not in list(range(self.size)):
+                raise ValueError("y-coord can be only between 0 and {} but it is {}".format(self.size-1, vessel.pos.y))
 
             # vessel.pos.x_int_num = self._alphabet_vessel.pos.x_int_map[vessel.pos.x]
 
@@ -147,18 +147,18 @@ class Grid:
         self.grid_hidden[vessel.pos.y+vessel.size-1][vessel.pos.x_int] = "V"
 
     def update(self, attack_pos: Position):
-        for i, row in enumerate(self.grid_hidden):
-            for j, char in enumerate(row):
-                if char in ("^", "|", "V"):
-                    # ship is attacked
-                    # show attacked ship part by "x"
-                    # update the grid
-                    self.grid[i][j] = "x"
-                else:
-                    # missile in water
-                    # show attacked part by "o"
-                    # update the grid
-                    self.grid[i][j] = "o"
+        if self.grid_hidden[attack_pos.y][attack_pos.x_int] in ("^", "|", "V"):
+            if self.grid[attack_pos.y][attack_pos.x_int] != "x":
+                # ship is attacked
+                # show attacked ship part by "x"
+                # update the grid
+                self.grid[attack_pos.y][attack_pos.x_int] = "x"
+        else:
+            # missile in water
+            # show attacked part by "o"
+            # update the grid
+            self.grid[attack_pos.y][attack_pos.x_int] = "o"
+
 
 
 

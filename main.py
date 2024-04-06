@@ -6,12 +6,40 @@ from components.armada import (
     Vessel, Armada, Battleship, Cruiser, Destroyer, Submarine
    )
 from gameplay.gameplay import (
-    print_rules, Game
+    Game
 )
 from utils.configs import (DEFAULT_INITIAL_MISSILES_NUM)
 
 
+def clearscreen():
+    # clear the screen
+    if os.name == "nt":
+        os.system("cls")
+    else:
+        os.system("clear")
+
+
+def print_rules():
+    print(
+"""
++++++++++
++ RULES +
++++++++++
+
+1. One move allowed per step.
+2. Give the coordinate in this format - <column-alphabet><row-number>. Eg - E3
+3. When the missile hits a vessel , you will see "x" on the board else "o".
+4. Total {} missiles are available.
+5. You Won when you are able to find and destroy all the vessels.
+6. You Lose when all the missiles get exhausted before winning.
+""".format(DEFAULT_INITIAL_MISSILES_NUM)
+    )
+
+
 def main(args):
+
+    # clear the screen
+    clearscreen()
 
     # initialize grid with given size
     grid = Grid(size=args.grid_size)
@@ -84,9 +112,13 @@ def main(args):
             # pos_dict_for_vessel = {vessel: pos}
             try:
                 grid.place_vessel(vessel)
-            except Exception as e:
-                print(e)
+            except AssertionError as e:
+                print("Cannot place {} at {}, position overlapping with another vessel".format(vessel.name, _pos))
                 continue
+            except IndexError:
+                print("Cannot accomodate {} at {}.".format(vessel.name, _pos))
+            except ValueError:
+                print("{} position not available.".format(_pos))
             else:
                 break
 
@@ -109,16 +141,12 @@ def main(args):
     # initialize game
     game = Game(grid,
                 armada,
-                DEFAULT_INITIAL_MISSILES_NUM
+                args.num_missiles
                 )
 
-    # clear the screen
-    if os.name == "nt":
-        os.system("cls")
-    else:
-        os.system("clear")
-
     while True:
+        clearscreen()
+
         # print the new game screen
         # it will have :
         # 1. Rules
@@ -128,6 +156,10 @@ def main(args):
 
         # show grid
         grid.show()
+
+        # show the score, etc.
+        # show number of vessels left, number of missiles left.
+        game.show_stats()
 
         # check winning condition
         if game.is_won():
@@ -146,5 +178,6 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--grid-size", type=int, default=9, help="Specify the size of the grid of the game.")
+    parser.add_argument("--num-missiles", type=int, default=15, help="Number of missiles.")
     args = parser.parse_args()
     main(args)

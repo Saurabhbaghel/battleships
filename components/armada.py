@@ -20,8 +20,8 @@ class Vessel:
         self.vessel_type = "Battleship"
         self.name = name
         self.pos = pos
-        self.size = getattr(VesselSize, self.vessel_type.lower()).value
-        self.health = self.size
+        # self.size = getattr(VesselSize, self.vessel_type.lower()).value
+        # self.health = self.size
 
     def is_attacked(self, attack_coord: Position):
         """
@@ -52,6 +52,7 @@ class Battleship(Vessel):
         self.name = name
         self.vessel_type = "battleship"
         self.size = 4
+        self.health = self.size
 
 
 class Cruiser(Vessel):
@@ -60,6 +61,7 @@ class Cruiser(Vessel):
         self.name = name
         self.vessel_type = "cruiser"
         self.size = 3
+        self.health = self.size
 
 
 class Destroyer(Vessel):
@@ -68,6 +70,7 @@ class Destroyer(Vessel):
         self.name = name
         self.vessel_type = "destroyer"
         self.size = 2
+        self.health = self.size
 
 
 class Submarine(Vessel):
@@ -76,6 +79,7 @@ class Submarine(Vessel):
         self.name = name
         self.vessel_type = "submarine"
         self.size = 1
+        self.health = self.size
 
 
 class Armada:
